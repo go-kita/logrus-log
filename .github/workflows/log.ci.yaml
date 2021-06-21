@@ -1,0 +1,47 @@
+# Copyright 2021 dowen-liu <hawkdowen@hotmail.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+
+name: Log
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+      - 'feat*'
+      - 'fix*'
+      - 'release*'
+      - 'v*'
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - assigned
+      - edited
+      - ready_for_review
+      - review_requested
+      - synchronize
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Lint
+        run: |
+          go get golang.org/x/lint/golint
+          golint ./...
